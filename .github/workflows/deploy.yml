@@ -26,5 +26,7 @@ jobs:
             git fetch origin main
             git reset --hard origin/main
 
+            cd /home/opc/mircs
+
             docker compose down
             docker compose up -d --force-recreate
