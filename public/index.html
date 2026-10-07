@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Apathy Server Manager</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body
+    class="bg-gray-900 text-gray-100 min-h-screen flex flex-col items-center justify-center p-6"
+  >
+    <div
+      class="w-full max-w-lg bg-gray-800 rounded-xl shadow-2xl p-8 border border-gray-700"
+    >
+      <h1 class="text-2xl font-bold mb-6 text-center text-green-400">
+        Apathy Server Manager
+      </h1>
+
+      <!-- Server Selector -->
+      <div class="mb-6">
+        <label class="block text-sm font-medium text-gray-300 mb-2"
+          >Select Server:</label
+        >
+        <select
+          id="serverSelect"
+          class="w-full bg-gray-900 border border-gray-700 rounded-lg p-2.5 text-gray-100 focus:ring-green-500 focus:border-green-500"
+        >
+          <option value="">Loading servers...</option>
+        </select>
+      </div>
+
+      <!-- Server Controls -->
+      <div class="flex gap-4 mb-6">
+        <button
+          onclick="controlContainer('start')"
+          class="flex-1 bg-green-600 hover:bg-green-500 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+        >
+          Start Server
+        </button>
+        <button
+          onclick="controlContainer('stop')"
+          class="flex-1 bg-red-600 hover:bg-red-500 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+        >
+          Stop Server
+        </button>
+      </div>
+
+      <!-- Download Section -->
+      <div class="mb-6 p-4 bg-gray-900 rounded-lg border border-gray-700">
+        <h2 class="text-lg font-semibold mb-2 text-gray-200">Download World</h2>
+        <button
+          onclick="downloadWorld()"
+          class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+        >
+          Download Selected World (.zip)
+        </button>
+      </div>
+
+      <!-- Upload Section -->
+      <div class="p-4 bg-gray-900 rounded-lg border border-gray-700">
+        <h2 class="text-lg font-semibold mb-2 text-gray-200">
+          Upload & Replace World
+        </h2>
+        <form id="uploadForm" onsubmit="uploadWorld(event)" class="space-y-4">
+          <input
+            type="file"
+            id="worldFile"
+            accept=".zip"
+            required
+            class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-500 cursor-pointer"
+          />
+          <button
+            type="submit"
+            class="w-full bg-blue-600 hover:bg-blue-500 text-white font-medium py-2 px-4 rounded-lg transition duration-200"
+          >
+            Upload, Restart & Replace
+          </button>
+        </form>
+      </div>
+
+      <p id="statusMsg" class="mt-4 text-center text-sm text-yellow-400"></p>
+    </div>
+
+    <script>
+      async function loadServers() {
+        const res = await fetch("/api/servers");
+        const servers = await res.json();
+        const select = document.getElementById("serverSelect");
+        select.innerHTML = "";
+        servers.forEach((srv) => {
+          const opt = document.createElement("option");
+          opt.value = srv;
+          opt.textContent = srv;
+          select.appendChild(opt);
+        });
+      }
+
+      function downloadWorld() {
+        const server = document.getElementById("serverSelect").value;
+        if (!server) return alert("Select a server first!");
+        window.location.href = `/api/download/${server}`;
+      }
+
+      async function uploadWorld(e) {
+        e.preventDefault();
+        const server = document.getElementById("serverSelect").value;
+        const fileInput = document.getElementById("worldFile");
+        const msg = document.getElementById("statusMsg");
+
+        if (!server || !fileInput.files[0])
+          return alert("Select a server and a file!");
+
+        const formData = new FormData();
+        formData.append("world", fileInput.files[0]);
+
+        msg.textContent = "Uploading and restarting server... Please wait.";
+
+        const res = await fetch(`/api/upload/${server}`, {
+          method: "POST",
+          body: formData,
+        });
+
+        const text = await res.text();
+        msg.textContent = text;
+      }
+
+      async function controlContainer(action) {
+        const server = document.getElementById("serverSelect").value;
+        const msg = document.getElementById("statusMsg");
+        if (!server) return alert("Select a server first!");
+
+        msg.textContent = `Attempting to ${action} server...`;
+        const res = await fetch(`/api/container/${server}/${action}`, {
+          method: "POST",
+        });
+        const text = await res.text();
+        msg.textContent = text;
+      }
+
+      loadServers();
+    </script>
+  </body>
+</html>
