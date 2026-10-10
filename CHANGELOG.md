@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/MohamedAbidMiah/mc-manager/compare/v1.0.2...v1.0.3) (2026-10-10)
+
+
+### Bug Fixes
+
+* use Esm ([#7](https://github.com/MohamedAbidMiah/mc-manager/issues/7)) ([b7818df](https://github.com/MohamedAbidMiah/mc-manager/commit/b7818dfef883406150f279b9f56d6ea0b03c8ba4))
+
 ## [1.0.2](https://github.com/MohamedAbidMiah/mc-manager/compare/v1.0.1...v1.0.2) (2026-10-10)
 
 
