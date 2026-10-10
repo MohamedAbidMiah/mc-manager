@@ -1,12 +1,12 @@
-const express = require("express");
-const multer = require("multer");
-const unzipper = require("unzipper");
-const archiver = require("archiver");
-const fs = require("fs");
-const path = require("path");
-const crypto = require("crypto");
-const { execFile } = require("child_process");
-const { pipeline } = require("stream/promises");
+import { ZipArchive } from "archiver";
+import express from "express";
+import multer from "multer";
+import { execFile } from "node:child_process";
+import crypto from "node:crypto";
+import fs from "node:fs";
+import path from "node:path";
+import { pipeline } from "node:stream/promises";
+import unzipper from "unzipper";
 
 const app = express();
 const upload = multer({ dest: "uploads/" });
@@ -116,7 +116,7 @@ app.get("/api/download/:server", validateServer, (req, res) => {
   );
 
   // level 1 = fast; world files (.mca) are already compressed internally
-  const archive = archiver("zip", { zlib: { level: 1 } });
+  const archive = new ZipArchive({ zlib: { level: 1 } });
   archive.on("error", (err) => {
     console.error("Zip error:", err);
     res.destroy(err);
