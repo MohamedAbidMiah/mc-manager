@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/MohamedAbidMiah/mc-manager/compare/v1.0.1...v1.0.2) (2026-10-10)
+
+
+### Bug Fixes
+
+* Upload limit fix ([#5](https://github.com/MohamedAbidMiah/mc-manager/issues/5)) ([6251f8a](https://github.com/MohamedAbidMiah/mc-manager/commit/6251f8aeaea48ee964f46326279759ff6e21a59b))
+
 ## [1.0.1](https://github.com/MohamedAbidMiah/mc-manager/compare/v1.0.0...v1.0.1) (2026-10-07)
 
 
